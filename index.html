@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="LifeSync — Tâches, budget, santé et communauté en une seule app. Gratuit.">
+<title>LifeSync — Simplifiez votre quotidien</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════ TOKENS ═══════════ */
+:root{
+  --bg:#f5f4f0;--white:#fff;--ink:#111110;--sub:#6b6b65;
+  --border:#e4e2db;
+  --blue:#2d5be3;--blue-lt:#eef1fd;
+  --green:#0dab73;--green-lt:#e6f8f2;
+  --amber:#e07d00;--amber-lt:#fef3e2;
+  --rose:#e03060;--rose-lt:#fde8ee;
+  --r:14px;--r-lg:22px;
+  --sh:0 2px 12px rgba(0,0,0,.07);
+  --sh-lg:0 8px 40px rgba(0,0,0,.11);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+button{cursor:pointer;border:none;font-family:inherit;}
+input,textarea,select{font-family:inherit;outline:none;}
+.hidden{display:none!important;}
+
+/* ═══════════ SCREENS ═══════════ */
+.screen{display:none;}
+.screen.on{display:block;}
+
+/* ═══════════ BUTTONS ═══════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
+  padding:.72rem 1.5rem;border-radius:50px;font-size:.88rem;font-weight:600;
+  transition:all .2s;white-space:nowrap;border:none;}
+.btn-ink{background:var(--ink);color:#fff;}
+.btn-ink:hover{background:var(--blue);transform:translateY(-1px);box-shadow:0 8px 24px rgba(45,91,227,.35);}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(45,91,227,.4);}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border);}
+.btn-outline:hover{border-color:var(--ink);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(13,171,115,.4);}
+.btn-ghost{background:transparent;color:rgba(255,255,255,.6);border:1.5px solid rgba(255,255,255,.15);}
+.btn-ghost:hover{color:#fff;border-color:rgba(255,255,255,.4);}
+.btn-white{background:#fff;color:var(--ink);}
+.btn-white:hover{background:var(--blue-lt);}
+.btn-sm{padding:.45rem .9rem;font-size:.78rem;}
+.btn-lg{padding:.95rem 2rem;font-size:1rem;}
+.btn-full{width:100%;}
+
+/* ════════════════════════════════════
+   1. LANDING PAGE
+════════════════════════════════════ */
+/* Nav */
+.l-nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.85rem 2rem;
+  background:rgba(245,244,240,.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.logo{font-family:'Instrument Serif',serif;font-size:1.3rem;letter-spacing:-.03em;}
+.logo span{color:var(--blue);}
+.l-nav-links{display:flex;gap:1.8rem;list-style:none;font-size:.84rem;color:var(--sub);}
+.l-nav-links a:hover{color:var(--ink);}
+.l-nav-btns{display:flex;gap:.6rem;align-items:center;}
+
+/* Hero */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:8rem 1.5rem 4rem;
+}
+.live-pill{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:var(--white);border:1px solid var(--border);border-radius:50px;
+  padding:.37rem .9rem;font-size:.75rem;font-weight:500;color:var(--sub);
+  margin-bottom:1.8rem;box-shadow:var(--sh);
+  animation:up .5s ease both;
+}
+.ldot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.hero h1{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(2.8rem,6.5vw,5.4rem);line-height:1.04;letter-spacing:-.025em;
+  max-width:840px;animation:up .55s .06s ease both;
+}
+.hero h1 em{font-style:italic;color:var(--blue);}
+.hero-sub{max-width:480px;margin:1.3rem auto 0;font-size:1.02rem;font-weight:300;color:var(--sub);line-height:1.75;animation:up .55s .12s ease both;}
+.hero-btns{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:2.2rem;animation:up .55s .18s ease both;}
+.proof{display:flex;align-items:center;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:2rem;font-size:.8rem;color:var(--sub);animation:up .55s .22s ease both;}
+.avs{display:flex;}
+.av{width:27px;height:27px;border-radius:50%;border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:800;color:#fff;}
+.av+.av{margin-left:-8px;}
+.av1{background:#2d5be3;}.av2{background:#e03060;}.av3{background:#0dab73;}.av4{background:#e07d00;}.av5{background:#7c3aed;}
+.stars{color:#f59e0b;letter-spacing:-.5px;}
+.proof strong{color:var(--ink);}
+
+/* Ticker */
+.tick-wrap{position:relative;overflow:hidden;margin-top:2.5rem;animation:up .55s .28s ease both;}
+.tick-wrap::before,.tick-wrap::after{content:'';position:absolute;top:0;bottom:0;width:70px;z-index:2;pointer-events:none;}
+.tick-wrap::before{left:0;background:linear-gradient(to right,var(--bg),transparent);}
+.tick-wrap::after{right:0;background:linear-gradient(to left,var(--bg),transparent);}
+.tick-row{display:flex;gap:.6rem;width:max-content;animation:ticker 28s linear infinite;padding:.3rem 0;}
+.tick-row:hover{animation-play-state:paused;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.fc{display:flex;align-items:center;gap:.35rem;background:var(--white);border:1px solid var(--border);border-radius:50px;padding:.27rem .72rem;font-size:.72rem;color:var(--sub);white-space:nowrap;transition:border-color .2s;}
+.fc:hover{border-color:var(--blue);color:var(--ink);}
+
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Sections */
+.ctr{max-width:1060px;margin:0 auto;padding:0 1.5rem;}
+.sec{padding:5.5rem 0;}
+.sec-lbl{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);margin-bottom:.7rem;}
+.sec-h{font-family:'Instrument Serif',serif;font-size:clamp(1.7rem,3.5vw,2.7rem);line-height:1.12;letter-spacing:-.01em;}
+
+/* Steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2.8rem;}
+.step{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.8rem;text-align:center;transition:transform .25s,box-shadow .25s;}
+.step:hover{transform:translateY(-4px);box-shadow:var(--sh-lg);}
+.step-ico{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto 1rem;}
+.ib{background:var(--blue-lt);}.ig{background:var(--green-lt);}.ia{background:var(--amber-lt);}
+.step-n{font-size:.64rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:.3rem;}
+.step-t{font-size:.93rem;font-weight:700;margin-bottom:.4rem;}
+.step-d{font-size:.81rem;color:var(--sub);line-height:1.6;}
+
+/* Feature cards */
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:2.8rem;}
+.fcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.8rem;transition:transform .25s,box-shadow .25s;}
+.fcard:hover{transform:translateY(-3px);box-shadow:var(--sh-lg);}
+.fcard.wide{grid-column:span 2;}
+.fcard-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;margin-bottom:.9rem;}
+.fcard-t{font-size:.93rem;font-weight:700;margin-bottom:.35rem;}
+.fcard-d{font-size:.81rem;color:var(--sub);line-height:1.6;}
+.tag{display:inline-block;margin-top:.8rem;font-size:.64rem;font-weight:700;letter-spacing:.5px;padding:.17rem .52rem;border-radius:50px;text-transform:uppercase;}
+.tag-b{background:var(--blue-lt);color:var(--blue);}
+.tag-g{background:var(--green-lt);color:var(--green);}
+.tag-a{background:var(--amber-lt);color:var(--amber);}
+.tag-r{background:var(--rose-lt);color:var(--rose);}
+.bars{margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;}
+.bar-r{display:flex;align-items:center;gap:.7rem;font-size:.73rem;}
+.bar-l{width:76px;color:var(--sub);flex-shrink:0;}
+.bar-t{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.bar-f{height:100%;border-radius:3px;}
+.bar-v{font-weight:600;width:30px;text-align:right;}
+
+/* Pricing */
+.pricing-sec{background:var(--white);}
+.bill-row{display:flex;align-items:center;gap:.8rem;margin-top:1.8rem;font-size:.83rem;font-weight:500;color:var(--sub);}
+.ptog{position:relative;width:46px;height:24px;background:var(--border);border-radius:50px;border:none;cursor:pointer;transition:background .25s;}
+.ptog.on{background:var(--green);}
+.pknob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:white;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .25s;}
+.ptog.on .pknob{transform:translateX(22px);}
+.save-chip{background:var(--green-lt);color:var(--green);font-size:.64rem;font-weight:700;letter-spacing:.5px;padding:.17rem .48rem;border-radius:50px;text-transform:uppercase;}
+.p-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:2.2rem;}
+.pcard{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.8rem;position:relative;transition:transform .25s,box-shadow .25s;}
+.pcard:hover{transform:translateY(-4px);box-shadow:var(--sh-lg);}
+.pcard.pop{background:var(--white);border-color:var(--blue);box-shadow:0 0 0 3px rgba(45,91,227,.1);}
+.pop-lbl{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--blue);color:white;font-size:.62rem;font-weight:700;letter-spacing:.5px;padding:.22rem .8rem;border-radius:50px;text-transform:uppercase;white-space:nowrap;}
+.p-tier{font-size:.64rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);margin-bottom:.9rem;}
+.p-price{font-family:'Instrument Serif',serif;font-size:2.7rem;line-height:1;letter-spacing:-.03em;}
+.p-price sup{font-size:.93rem;vertical-align:top;margin-top:.4rem;display:inline-block;}
+.p-mo{font-size:.74rem;color:var(--sub);margin-top:.2rem;}
+.p-eq{font-size:.68rem;color:var(--green);font-weight:600;margin-top:.1rem;}
+.p-feats{list-style:none;margin:1.3rem 0;display:flex;flex-direction:column;gap:.45rem;}
+.p-feats li{font-size:.8rem;color:var(--sub);display:flex;align-items:flex-start;gap:.45rem;line-height:1.4;}
+.p-feats li.on{color:var(--ink);}
+.ck{flex-shrink:0;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.56rem;margin-top:1px;}
+li.on .ck{background:var(--green-lt);color:var(--green);}
+li:not(.on) .ck{background:var(--border);color:var(--sub);}
+.p-note{text-align:center;margin-top:1.2rem;font-size:.73rem;color:var(--sub);}
+.p-note strong{color:var(--ink);}
+
+/* Global */
+.global-sec{background:var(--ink);color:white;}
+.global-sec .sec-lbl{color:rgba(255,255,255,.38);}
+.global-sec .sec-h{color:white;}
+.regions{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-top:2.5rem;}
+.rgn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:1.3rem 1rem;text-align:center;transition:background .2s;}
+.rgn:hover{background:rgba(255,255,255,.09);}
+.rgn-f{font-size:1.8rem;margin-bottom:.4rem;}
+.rgn-n{font-size:.78rem;font-weight:600;margin-bottom:.15rem;}
+.rgn-c{font-size:.66rem;color:var(--green);font-weight:600;}
+
+/* CTA */
+.cta-sec{background:var(--ink);color:white;text-align:center;padding:6rem 0;}
+.cta-sec .sec-h{color:white;max-width:540px;margin:0 auto;}
+.cta-sec .sec-h em{font-style:italic;color:var(--blue);}
+.cta-sec p{color:rgba(255,255,255,.48);margin:1rem auto 0;max-width:360px;font-size:.93rem;line-height:1.7;font-weight:300;}
+.cta-row{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:2rem;}
+.trust{display:flex;gap:1.3rem;justify-content:center;flex-wrap:wrap;margin-top:1.6rem;font-size:.73rem;color:rgba(255,255,255,.3);}
+
+/* Footer */
+.l-foot{background:var(--ink);border-top:1px solid rgba(255,255,255,.07);padding:1.6rem 0;}
+.foot-in{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.foot-logo{font-family:'Instrument Serif',serif;font-size:1.05rem;color:white;}
+.foot-logo span{color:var(--blue);}
+.foot-copy{font-size:.72rem;color:rgba(255,255,255,.26);}
+.foot-links{display:flex;gap:1rem;font-size:.72rem;color:rgba(255,255,255,.32);}
+.foot-links a:hover{color:white;}
+
+/* ════════════════════════════════════
+   2. AUTH
+════════════════════════════════════ */
+#auth{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:2rem;}
+.auth-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:2.5rem;max-width:390px;width:100%;box-shadow:var(--sh-lg);}
+.auth-logo{font-family:'Instrument Serif',serif;font-size:1.4rem;letter-spacing:-.03em;text-align:center;margin-bottom:1.6rem;}
+.auth-logo span{color:var(--blue);}
+.auth-tabs{display:flex;gap:.4rem;margin-bottom:1.4rem;background:var(--bg);border-radius:50px;padding:.28rem;}
+.auth-tab{flex:1;padding:.48rem;border-radius:50px;font-size:.82rem;font-weight:600;color:var(--sub);text-align:center;cursor:pointer;transition:all .2s;border:none;background:transparent;}
+.auth-tab.on{background:var(--white);color:var(--ink);box-shadow:var(--sh);}
+.field{width:100%;padding:.78rem 1rem;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);color:var(--ink);font-size:.87rem;margin-bottom:.65rem;transition:border-color .2s;}
+.field:focus{border-color:var(--blue);background:white;}
+.field::placeholder{color:var(--sub);}
+.auth-note{font-size:.7rem;color:var(--sub);text-align:center;margin-top:.7rem;}
+.auth-err{background:var(--rose-lt);color:var(--rose);font-size:.78rem;padding:.6rem .9rem;border-radius:var(--r);margin-bottom:.7rem;display:none;}
+
+/* ════════════════════════════════════
+   3. APP DASHBOARD
+════════════════════════════════════ */
+#app{display:flex;min-height:100vh;}
+
+/* Sidebar */
+.sidebar{width:220px;flex-shrink:0;background:var(--ink);display:flex;flex-direction:column;padding:1.4rem 1rem;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .25s;}
+.sb-logo{font-family:'Instrument Serif',serif;font-size:1.2rem;color:white;letter-spacing:-.03em;padding:.4rem .6rem 1.4rem;}
+.sb-logo span{color:var(--blue);}
+.sb-nav{display:flex;flex-direction:column;gap:.18rem;flex:1;}
+.sbi{display:flex;align-items:center;gap:.65rem;padding:.68rem .8rem;border-radius:var(--r);font-size:.84rem;font-weight:500;color:rgba(255,255,255,.42);cursor:pointer;transition:all .2s;border:none;background:transparent;text-align:left;width:100%;}
+.sbi:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.78);}
+.sbi.on{background:rgba(255,255,255,.1);color:white;}
+.sbi .ico{font-size:.95rem;width:19px;text-align:center;}
+.sb-bot{padding-top:.9rem;border-top:1px solid rgba(255,255,255,.07);}
+.sb-user{display:flex;align-items:center;gap:.65rem;padding:.65rem .8rem;}
+.sb-av{width:31px;height:31px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:white;flex-shrink:0;}
+.sb-name{font-size:.78rem;font-weight:600;color:white;}
+.sb-plan{font-size:.62rem;color:rgba(255,255,255,.33);}
+
+/* Main */
+.main{margin-left:220px;flex:1;padding:2rem;min-height:100vh;}
+.main-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.8rem;flex-wrap:wrap;gap:.8rem;}
+.main-greeting{font-family:'Instrument Serif',serif;font-size:1.55rem;letter-spacing:-.02em;}
+.main-date{font-size:.78rem;color:var(--sub);}
+
+/* Views */
+.view{display:none;}
+.view.on{display:block;}
+
+/* Cards */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;}
+.card-sm{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem;}
+
+/* Stats grid */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.2rem;}
+.stat-lbl{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:.4rem;}
+.stat-val{font-family:'Instrument Serif',serif;font-size:1.7rem;line-height:1;}
+.stat-change{font-size:.72rem;margin-top:.25rem;font-weight:500;}
+.up{color:var(--green);}.down{color:var(--rose);}
+.stat-bar{height:4px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:.6rem;}
+.stat-bar-fill{height:100%;border-radius:3px;transition:width .4s;}
+
+/* Two-col layout */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+.full-col{margin-bottom:1rem;}
+
+/* Tasks */
+.task-input-row{display:flex;gap:.7rem;margin-bottom:1.2rem;}
+.task-input{flex:1;padding:.72rem 1rem;background:var(--bg);border:1.5px solid var(--border);border-radius:50px;font-size:.85rem;color:var(--ink);transition:border-color .2s;}
+.task-input:focus{border-color:var(--blue);background:white;}
+.task-input::placeholder{color:var(--sub);}
+.task-list{display:flex;flex-direction:column;gap:.5rem;max-height:340px;overflow-y:auto;}
+.task-item{display:flex;align-items:center;gap:.75rem;padding:.7rem .9rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);transition:background .2s;}
+.task-item.done{opacity:.55;}
+.task-check{width:19px;height:19px;border-radius:50%;border:1.8px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
+.task-check.on{background:var(--green);border-color:var(--green);}
+.task-check.on::after{content:'✓';font-size:.62rem;color:white;font-weight:800;}
+.task-text{flex:1;font-size:.84rem;}
+.task-text.done{text-decoration:line-through;color:var(--sub);}
+.task-cat{font-size:.64rem;font-weight:600;padding:.15rem .45rem;border-radius:50px;}
+.task-del{background:none;border:none;color:var(--sub);cursor:pointer;font-size:.85rem;padding:.2rem;opacity:0;transition:opacity .2s;}
+.task-item:hover .task-del{opacity:1;}
+.task-cat-sel{padding:.68rem .9rem;background:var(--bg);border:1.5px solid var(--border);border-radius:50px;font-size:.82rem;color:var(--ink);cursor:pointer;}
+
+/* Health */
+.health-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem;}
+.health-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.3rem;text-align:center;}
+.health-ico{font-size:1.6rem;margin-bottom:.5rem;}
+.health-lbl{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:.3rem;}
+.health-val{font-family:'Instrument Serif',serif;font-size:1.8rem;line-height:1;}
+.health-unit{font-size:.72rem;color:var(--sub);margin-top:.15rem;}
+.health-ring{position:relative;width:70px;height:70px;margin:0 auto .5rem;}
+.health-ring svg{transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:var(--border);stroke-width:6;}
+.ring-fg{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .5s;}
+.ring-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:.95rem;}
+
+.health-log{display:flex;flex-direction:column;gap:.5rem;margin-top:.8rem;max-height:200px;overflow-y:auto;}
+.log-item{display:flex;align-items:center;justify-content:space-between;padding:.55rem .8rem;background:var(--bg);border-radius:var(--r);font-size:.8rem;}
+.log-time{color:var(--sub);font-size:.7rem;}
+
+.health-input-row{display:grid;grid-template-columns:1fr 1fr auto;gap:.6rem;margin-bottom:.8rem;}
+.health-input-row input,.health-input-row select{padding:.68rem .85rem;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);font-size:.83rem;color:var(--ink);width:100%;transition:border-color .2s;}
+.health-input-row input:focus,.health-input-row select:focus{border-color:var(--green);}
+
+/* Budget */
+.budget-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.2rem;}
+.bsum{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.2rem;text-align:center;}
+.bsum-lbl{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:.3rem;}
+.bsum-val{font-family:'Instrument Serif',serif;font-size:1.6rem;}
+.expense-input-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.6rem;margin-bottom:1rem;}
+.expense-input-row input,.expense-input-row select{padding:.68rem .85rem;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);font-size:.83rem;color:var(--ink);width:100%;transition:border-color .2s;}
+.expense-input-row input:focus,.expense-input-row select:focus{border-color:var(--amber);}
+.expense-list{display:flex;flex-direction:column;gap:.5rem;max-height:280px;overflow-y:auto;}
+.exp-item{display:flex;align-items:center;justify-content:space-between;padding:.65rem .9rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);font-size:.82rem;}
+.exp-cat{font-size:.64rem;font-weight:600;padding:.13rem .42rem;border-radius:50px;background:var(--amber-lt);color:var(--amber);}
+.exp-amt{font-family:'Instrument Serif',serif;font-size:1rem;font-weight:600;}
+.exp-del{background:none;color:var(--sub);cursor:pointer;opacity:0;transition:opacity .2s;}
+.exp-item:hover .exp-del{opacity:1;}
+.budget-bar-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.3rem;margin-bottom:1rem;}
+.budget-bar-lbl{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:.6rem;font-weight:500;}
+.budget-bar-track{height:10px;background:var(--border);border-radius:50px;overflow:hidden;}
+.budget-bar-fill{height:100%;border-radius:50px;background:var(--green);transition:width .4s;}
+
+/* Community */
+.comm-input-area{margin-bottom:1.2rem;}
+.comm-textarea{width:100%;padding:.8rem 1rem;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);font-size:.85rem;color:var(--ink);resize:vertical;min-height:80px;transition:border-color .2s;line-height:1.5;}
+.comm-textarea:focus{border-color:var(--blue);}
+.comm-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-top:.7rem;flex-wrap:wrap;}
+.comm-cat-row{display:flex;gap:.5rem;flex-wrap:wrap;}
+.comm-cat-btn{padding:.38rem .75rem;border-radius:50px;font-size:.73rem;font-weight:600;border:1.5px solid var(--border);background:transparent;color:var(--sub);cursor:pointer;transition:all .2s;}
+.comm-cat-btn.on{border-color:var(--blue);background:var(--blue-lt);color:var(--blue);}
+.posts{display:flex;flex-direction:column;gap:.8rem;}
+.post{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.2rem 1.4rem;}
+.post-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.6rem;}
+.post-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:white;flex-shrink:0;}
+.post-author{font-size:.82rem;font-weight:600;}
+.post-time{font-size:.7rem;color:var(--sub);}
+.post-body{font-size:.84rem;line-height:1.6;color:var(--ink);}
+.post-tag{font-size:.64rem;font-weight:700;padding:.14rem .5rem;border-radius:50px;margin-top:.7rem;display:inline-block;}
+.post-actions{display:flex;gap:.8rem;margin-top:.8rem;}
+.post-action{background:none;border:none;font-size:.76rem;color:var(--sub);cursor:pointer;display:flex;align-items:center;gap:.3rem;transition:color .2s;padding:0;}
+.post-action:hover{color:var(--blue);}
+.post-action.liked{color:var(--rose);}
+
+/* Profile */
+.profile-grid{display:grid;grid-template-columns:280px 1fr;gap:1.5rem;}
+.profile-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem;text-align:center;}
+.profile-av-big{width:80px;height:80px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;color:white;margin:0 auto 1rem;}
+.profile-name{font-family:'Instrument Serif',serif;font-size:1.3rem;}
+.profile-plan{display:inline-block;margin-top:.4rem;font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:50px;}
+.plan-free{background:var(--border);color:var(--sub);}
+.plan-pro{background:var(--blue-lt);color:var(--blue);}
+.profile-stats{display:flex;justify-content:center;gap:1.5rem;margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+.pstat-val{font-family:'Instrument Serif',serif;font-size:1.4rem;display:block;}
+.pstat-lbl{font-size:.68rem;color:var(--sub);}
+.profile-settings{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem;}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0;border-bottom:1px solid var(--border);}
+.setting-row:last-child{border-bottom:none;}
+.setting-lbl{font-size:.88rem;font-weight:500;}
+.setting-sub{font-size:.75rem;color:var(--sub);margin-top:.15rem;}
+.toggle{position:relative;width:42px;height:22px;background:var(--border);border-radius:50px;border:none;cursor:pointer;transition:background .25s;flex-shrink:0;}
+.toggle.on{background:var(--green);}
+.tknob{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:white;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .25s;}
+.toggle.on .tknob{transform:translateX(20px);}
+
+/* Upgrade banner */
+.upgrade-banner{
+  background:linear-gradient(135deg,var(--blue),#1a3bb0);
+  border-radius:var(--r-lg);padding:1.3rem 1.6rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  margin-bottom:1.5rem;flex-wrap:wrap;
+}
+.ub-text{color:white;}
+.ub-title{font-family:'Instrument Serif',serif;font-size:1.1rem;margin-bottom:.2rem;}
+.ub-sub{font-size:.78rem;opacity:.75;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(17,17,16,.65);backdrop-filter:blur(7px);z-index:500;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-overlay.on{opacity:1;pointer-events:all;}
+.modal{background:white;border:1px solid var(--border);border-radius:28px;padding:2.4rem;max-width:420px;width:100%;text-align:center;transform:scale(.96) translateY(14px);transition:transform .3s;box-shadow:0 40px 80px rgba(0,0,0,.2);position:relative;}
+.modal-overlay.on .modal{transform:scale(1) translateY(0);}
+.modal-x{position:absolute;top:13px;right:13px;width:27px;height:27px;border-radius:50%;background:var(--bg);border:1px solid var(--border);color:var(--sub);font-size:.78rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;}
+.modal-x:hover{background:var(--rose-lt);color:var(--rose);}
+.modal-dots{display:flex;gap:.32rem;justify-content:center;margin-bottom:1.4rem;}
+.mdot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:all .3s;}
+.mdot.on{background:var(--blue);width:17px;border-radius:3px;}
+.modal-ico{font-size:2.2rem;margin-bottom:.75rem;}
+.modal-h{font-family:'Instrument Serif',serif;font-size:1.45rem;letter-spacing:-.02em;margin-bottom:.4rem;}
+.modal-sub{font-size:.84rem;color:var(--sub);margin-bottom:1.3rem;line-height:1.6;}
+.quick-plans{display:flex;flex-direction:column;gap:.55rem;margin:.8rem 0 1rem;}
+.qp{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);padding:.85rem 1.1rem;cursor:pointer;transition:all .2s;}
+.qp:hover,.qp.on{border-color:var(--blue);background:var(--blue-lt);}
+.qp-name{font-size:.88rem;font-weight:700;}
+.qp-desc{font-size:.7rem;color:var(--sub);margin-top:.1rem;}
+.qp-price{font-family:'Instrument Serif',serif;font-size:.95rem;}
+.qp-period{font-size:.63rem;color:var(--sub);}
+.qp-badge{background:var(--green);color:white;font-size:.58rem;font-weight:700;padding:.13rem .42rem;border-radius:50px;text-transform:uppercase;letter-spacing:.4px;display:inline-block;margin-top:.2rem;}
+.modal-note{font-size:.68rem;color:var(--sub);margin-top:.65rem;}
+.store-btns{display:flex;gap:.6rem;margin:1rem 0;}
+.sb-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.72rem 1rem;border-radius:var(--r);font-weight:700;font-size:.8rem;cursor:pointer;transition:transform .2s;}
+.sb-btn:hover{transform:translateY(-1px);}
+.sb-ios{background:var(--ink);color:white;border:none;}
+.sb-and{background:var(--green);color:white;border:none;}
+
+/* Responsive */
+@media(max-width:900px){
+  .l-nav-links{display:none;}
+  .steps,.feat-grid,.p-grid,.regions,.stats-row,.health-grid,.budget-summary,.profile-grid,.two-col{grid-template-columns:1fr;}
+  .fcard.wide{grid-column:span 1;}
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:1.2rem;}
+  .expense-input-row{grid-template-columns:1fr 1fr;}
+  .health-input-row{grid-template-columns:1fr 1fr;}
+}
+@media(min-width:769px) and (max-width:1100px){
+  .regions{grid-template-columns:repeat(3,1fr);}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════
+     SCREEN 1 : LANDING
+══════════════════════ -->
+<div id="landing" class="screen on">
+
+  <nav class="l-nav">
+    <div class="logo">Life<span>Sync</span></div>
+    <ul class="l-nav-links">
+      <li><a href="#l-how">Comment ça marche</a></li>
+      <li><a href="#l-features">Fonctionnalités</a></li>
+      <li><a href="#l-pricing">Tarifs</a></li>
+    </ul>
+    <div class="l-nav-btns">
+      <button class="btn btn-outline btn-sm" onclick="showAuth('login')">Connexion</button>
+      <button class="btn btn-ink btn-sm" onclick="showAuth('signup')">Commencer — Gratuit</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="live-pill"><div class="ldot"></div>2 847 personnes actives en ce moment</div>
+    <h1>Une app.<br>Toute votre vie.<br><em>Dans le monde entier.</em></h1>
+    <p class="hero-sub">Tâches, santé, budget et communauté — synchronisés par l'IA. 150 pays. Gratuit pour toujours.</p>
+    <div class="hero-btns">
+      <button class="btn btn-ink btn-lg" onclick="showAuth('signup')">📲 Commencer gratuitement</button>
+      <a href="#l-how" class="btn btn-outline btn-lg">Voir comment ça marche</a>
+    </div>
+    <div class="proof">
+      <div class="avs"><div class="av av1">JP</div><div class="av av2">MK</div><div class="av av3">RA</div><div class="av av4">CL</div><div class="av av5">SB</div></div>
+      <span class="stars">★★★★★</span>
+      <span><strong>4,9/5</strong> · +180 000 utilisateurs dans 150 pays</span>
+    </div>
+    <div class="tick-wrap">
+      <div class="tick-row">
+        <span class="fc">🇫🇷 France</span><span class="fc">🇺🇸 USA</span><span class="fc">🇯🇵 Japon</span><span class="fc">🇧🇷 Brésil</span><span class="fc">🇩🇪 Allemagne</span><span class="fc">🇳🇬 Nigeria</span><span class="fc">🇮🇳 Inde</span><span class="fc">🇲🇽 Mexique</span><span class="fc">🇰🇷 Corée</span><span class="fc">🇬🇧 UK</span><span class="fc">🇦🇺 Australie</span><span class="fc">🇿🇦 Afrique du Sud</span><span class="fc">🇨🇦 Canada</span><span class="fc">🇮🇩 Indonésie</span><span class="fc">🇦🇷 Argentine</span><span class="fc">🇪🇸 Espagne</span>
+        <span class="fc">🇫🇷 France</span><span class="fc">🇺🇸 USA</span><span class="fc">🇯🇵 Japon</span><span class="fc">🇧🇷 Brésil</span><span class="fc">🇩🇪 Allemagne</span><span class="fc">🇳🇬 Nigeria</span><span class="fc">🇮🇳 Inde</span><span class="fc">🇲🇽 Mexique</span><span class="fc">🇰🇷 Corée</span><span class="fc">🇬🇧 UK</span><span class="fc">🇦🇺 Australie</span><span class="fc">🇿🇦 Afrique du Sud</span><span class="fc">🇨🇦 Canada</span><span class="fc">🇮🇩 Indonésie</span><span class="fc">🇦🇷 Argentine</span><span class="fc">🇪🇸 Espagne</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="l-how">
+    <div class="ctr">
+      <p class="sec-lbl">Comment ça marche</p>
+      <h2 class="sec-h">Prêt en 3 étapes.<br>Utile dès le premier jour.</h2>
+      <div class="steps">
+        <div class="step"><div class="step-ico ib">📲</div><p class="step-n">Étape 1</p><p class="step-t">Créez votre compte</p><p class="step-d">Gratuit, sans carte de crédit. 30 secondes et c'est prêt.</p></div>
+        <div class="step"><div class="step-ico ig">🤖</div><p class="step-n">Étape 2</p><p class="step-t">L'IA vous configure</p><p class="step-d">3 questions et l'app s'adapte à votre pays, vos objectifs, votre rythme.</p></div>
+        <div class="step"><div class="step-ico ia">✨</div><p class="step-n">Étape 3</p><p class="step-t">Vivez mieux, dès aujourd'hui</p><p class="step-d">Gagnez du temps et de l'argent grâce à vos tâches, budget et santé centralisés.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="l-features" style="background:var(--white)">
+    <div class="ctr">
+      <p class="sec-lbl">Fonctionnalités</p>
+      <h2 class="sec-h">4 piliers. Une vie simplifiée.</h2>
+      <div class="feat-grid">
+        <div class="fcard wide">
+          <div class="fcard-ico ib">✅</div>
+          <p class="fcard-t">Organisation intelligente</p>
+          <p class="fcard-d">L'IA priorise vos tâches, crée votre planning et vous rappelle l'essentiel. Économisez 2h par jour.</p>
+          <div class="bars">
+            <div class="bar-r"><span class="bar-l">Productivité</span><div class="bar-t"><div class="bar-f" style="width:87%;background:var(--blue)"></div></div><span class="bar-v">+87%</span></div>
+            <div class="bar-r"><span class="bar-l">Stress réduit</span><div class="bar-t"><div class="bar-f" style="width:72%;background:var(--green)"></div></div><span class="bar-v">−72%</span></div>
+          </div>
+          <span class="tag tag-b">IA intégrée</span>
+        </div>
+        <div class="fcard"><div class="fcard-ico" style="background:var(--rose-lt)">❤️</div><p class="fcard-t">Santé & bien-être</p><p class="fcard-d">Suivi pas, sommeil, calories. Coaching personnalisé basé sur vos données réelles. Vivez mieux.</p><span class="tag tag-r">Coach IA</span></div>
+        <div class="fcard"><div class="fcard-ico ia">💰</div><p class="fcard-t">Budget malin</p><p class="fcard-d">Suivez vos dépenses, fixez des objectifs d'épargne. Économisez en moyenne 200€/mois.</p><span class="tag tag-a">Épargne auto</span></div>
+        <div class="fcard"><div class="fcard-ico ig">🤝</div><p class="fcard-t">Communauté locale</p><p class="fcard-d">Entraide, bons plans, services entre voisins. Ensemble vous économisez plus.</p><span class="tag tag-g">Social réel</span></div>
+        <div class="fcard"><div class="fcard-ico ib">🌍</div><p class="fcard-t">Disponible partout</p><p class="fcard-d">6 langues, 150 pays. L'app s'adapte à votre culture, votre monnaie, vos habitudes.</p><span class="tag tag-b">150+ pays</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec global-sec" id="l-global">
+    <div class="ctr">
+      <p class="sec-lbl">Présence mondiale</p>
+      <h2 class="sec-h">Utilisé sur chaque continent.</h2>
+      <div class="regions">
+        <div class="rgn"><div class="rgn-f">🌍</div><div class="rgn-n">Afrique</div><div class="rgn-c">+340 000</div></div>
+        <div class="rgn"><div class="rgn-f">🌎</div><div class="rgn-n">Amériques</div><div class="rgn-c">+820 000</div></div>
+        <div class="rgn"><div class="rgn-f">🌏</div><div class="rgn-n">Asie-Pacifique</div><div class="rgn-c">+1,2 M</div></div>
+        <div class="rgn"><div class="rgn-f">🇪🇺</div><div class="rgn-n">Europe</div><div class="rgn-c">+680 000</div></div>
+        <div class="rgn"><div class="rgn-f">🕌</div><div class="rgn-n">Moyen-Orient</div><div class="rgn-c">+190 000</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec pricing-sec" id="l-pricing">
+    <div class="ctr">
+      <p class="sec-lbl">Tarifs</p>
+      <h2 class="sec-h">Gratuit pour toujours.<br>Puissant si vous voulez plus.</h2>
+      <div class="bill-row">
+        <span>Mensuel</span>
+        <button class="ptog on" id="btog" onclick="toggleBill()"><div class="pknob"></div></button>
+        <span>Annuel</span>
+        <span class="save-chip" id="saveChip">−40%</span>
+      </div>
+      <div class="p-grid">
+        <div class="pcard">
+          <p class="p-tier">Gratuit</p>
+          <div class="p-price"><sup>€</sup>0</div>
+          <p class="p-mo">pour toujours</p>
+          <ul class="p-feats">
+            <li class="on"><span class="ck">✓</span>20 tâches / mois</li>
+            <li class="on"><span class="ck">✓</span>Suivi santé basique</li>
+            <li class="on"><span class="ck">✓</span>Budget 1 catégorie</li>
+            <li class="on"><span class="ck">✓</span>Communauté locale</li>
+            <li><span class="ck">–</span>IA avancée</li>
+            <li><span class="ck">–</span>Multi-appareils</li>
+          </ul>
+          <button class="btn btn-outline btn-full" onclick="showAuth('signup')">Commencer gratuitement</button>
+        </div>
+        <div class="pcard pop">
+          <div class="pop-lbl">⚡ Le plus populaire</div>
+          <p class="p-tier">Pro</p>
+          <div class="p-price" id="proP"><sup>€</sup>4,99</div>
+          <p class="p-mo" id="proM">par mois · facturé annuellement</p>
+          <p class="p-eq" id="proE">= moins d'un café / semaine</p>
+          <ul class="p-feats">
+            <li class="on"><span class="ck">✓</span>Tâches illimitées + IA</li>
+            <li class="on"><span class="ck">✓</span>Coaching santé personnalisé</li>
+            <li class="on"><span class="ck">✓</span>Budget & épargne complets</li>
+            <li class="on"><span class="ck">✓</span>Multi-appareils</li>
+            <li class="on"><span class="ck">✓</span>Rapports hebdomadaires</li>
+            <li class="on"><span class="ck">✓</span>Support prioritaire</li>
+          </ul>
+          <button class="btn btn-blue btn-full" onclick="showAuth('signup')">Essai 14 jours — Gratuit</button>
+        </div>
+        <div class="pcard">
+          <p class="p-tier">Famille</p>
+          <div class="p-price" id="famP"><sup>€</sup>8,99</div>
+          <p class="p-mo" id="famM">par mois · facturé annuellement</p>
+          <p class="p-eq" id="famE">6 membres = 1,50€ / personne</p>
+          <ul class="p-feats">
+            <li class="on"><span class="ck">✓</span>Tout le plan Pro</li>
+            <li class="on"><span class="ck">✓</span>6 profils indépendants</li>
+            <li class="on"><span class="ck">✓</span>Agenda & budget famille</li>
+            <li class="on"><span class="ck">✓</span>Contrôle parental</li>
+            <li class="on"><span class="ck">✓</span>Support 24/7</li>
+            <li><span class="ck">–</span>API entreprise</li>
+          </ul>
+          <button class="btn btn-outline btn-full" onclick="showAuth('signup')">Choisir Famille</button>
+        </div>
+      </div>
+      <p class="p-note">🔒 Annulable à tout moment · Aucune carte pour l'essai · <strong>Remboursé si pas satisfait sous 30 jours</strong></p>
+    </div>
+  </section>
+
+  <section class="cta-sec">
+    <div class="ctr">
+      <h2 class="sec-h">Rejoignez des millions.<br><em>Commencez maintenant.</em></h2>
+      <p>Gratuit, rapide, mondial. L'app dont vous ne pourrez plus vous passer.</p>
+      <div class="cta-row">
+        <button class="btn btn-white btn-lg" onclick="showAuth('signup')">📲 Créer mon compte gratuit</button>
+        <a href="#l-pricing" class="btn btn-ghost btn-lg">Voir les tarifs</a>
+      </div>
+      <div class="trust">
+        <span>🔒 Aucune carte requise</span>
+        <span>✨ Gratuit pour toujours</span>
+        <span>🌍 150+ pays</span>
+        <span>⚡ Actif en 30 sec</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="l-foot">
+    <div class="ctr">
+      <div class="foot-in">
+        <div class="foot-logo">Life<span>Sync</span></div>
+        <p class="foot-copy">© 2026 LifeSync · iOS · Android · Web · 150 pays</p>
+        <div class="foot-links">
+          <a href="#">Confidentialité</a>
+          <a href="#">CGU</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+
+<!-- ══════════════════════
+     SCREEN 2 : AUTH
+══════════════════════ -->
+<div id="auth" class="screen">
+  <div class="auth-box">
+    <div class="auth-logo">Life<span>Sync</span></div>
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="tabSignup" onclick="switchTab('signup')">Créer un compte</button>
+      <button class="auth-tab" id="tabLogin" onclick="switchTab('login')">Se connecter</button>
+    </div>
+    <div id="auth-err" class="auth-err"></div>
+    <div id="form-signup">
+      <input class="field" type="text" id="su-name" placeholder="Votre prénom">
+      <input class="field" type="email" id="su-email" placeholder="Email">
+      <input class="field" type="password" id="su-pass" placeholder="Mot de passe (6 caractères min.)">
+      <button class="btn btn-blue btn-full" onclick="doSignup()">Créer mon compte gratuit →</button>
+      <p class="auth-note">🔒 Données sécurisées · Conforme RGPD</p>
+    </div>
+    <div id="form-login" class="hidden">
+      <input class="field" type="email" id="li-email" placeholder="Email">
+      <input class="field" type="password" id="li-pass" placeholder="Mot de passe">
+      <button class="btn btn-blue btn-full" onclick="doLogin()">Se connecter →</button>
+      <p class="auth-note"><a href="#" onclick="showLanding()">← Retour à l'accueil</a></p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════
+     SCREEN 3 : APP
+══════════════════════ -->
+<div id="app" class="screen">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo">Life<span>Sync</span></div>
+    <nav class="sb-nav">
+      <button class="sbi on" data-view="dash" onclick="switchView(this,'dash')"><span class="ico">🏠</span>Tableau de bord</button>
+      <button class="sbi" data-view="tasks" onclick="switchView(this,'tasks')"><span class="ico">✅</span>Mes tâches</button>
+      <button class="sbi" data-view="health" onclick="switchView(this,'health')"><span class="ico">❤️</span>Santé</button>
+      <button class="sbi" data-view="budget" onclick="switchView(this,'budget')"><span class="ico">💰</span>Budget</button>
+      <button class="sbi" data-view="community" onclick="switchView(this,'community')"><span class="ico">🤝</span>Communauté</button>
+      <button class="sbi" data-view="profile" onclick="switchView(this,'profile')"><span class="ico">👤</span>Profil</button>
+    </nav>
+    <div class="sb-bot">
+      <div class="sb-user">
+        <div class="sb-av" id="sbAv">?</div>
+        <div><div class="sb-name" id="sbName">—</div><div class="sb-plan" id="sbPlan">Gratuit</div></div>
+      </div>
+      <button class="sbi" onclick="doLogout()"><span class="ico">🚪</span>Déconnexion</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="main-top">
+      <div><div class="main-greeting" id="greeting">Bonjour 👋</div><div class="main-date" id="mainDate"></div></div>
+    </div>
+
+    <!-- ── DASHBOARD ── -->
+    <div id="view-dash" class="view on">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-lbl">Tâches aujourd'hui</div>
+          <div class="stat-val" id="ds-tasks" style="color:var(--blue)">0/0</div>
+          <div class="stat-change" id="ds-tasks-ch"></div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="ds-tasks-bar" style="background:var(--blue)"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">Pas marchés</div>
+          <div class="stat-val" id="ds-steps" style="color:var(--rose)">0</div>
+          <div class="stat-change" id="ds-steps-ch"></div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="ds-steps-bar" style="background:var(--rose)"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">Budget restant</div>
+          <div class="stat-val" id="ds-budget" style="color:var(--green)">—</div>
+          <div class="stat-change" id="ds-budget-ch"></div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="ds-budget-bar" style="background:var(--green)"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">Score de vie</div>
+          <div class="stat-val" id="ds-score" style="color:var(--amber)">—</div>
+          <div class="stat-change up">↑ En progression</div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="ds-score-bar" style="background:var(--amber)"></div></div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:1rem;">Tâches prioritaires</div>
+          <div id="dash-tasks" style="display:flex;flex-direction:column;gap:.5rem;"></div>
+          <button class="btn btn-outline btn-sm" style="margin-top:1rem;width:100%;" onclick="switchView(document.querySelector('[data-view=tasks]'),'tasks')">Voir toutes mes tâches →</button>
+        </div>
+        <div class="card">
+          <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:1rem;">Dernières dépenses</div>
+          <div id="dash-expenses" style="display:flex;flex-direction:column;gap:.5rem;"></div>
+          <button class="btn btn-outline btn-sm" style="margin-top:1rem;width:100%;" onclick="switchView(document.querySelector('[data-view=budget]'),'budget')">Gérer mon budget →</button>
+        </div>
+      </div>
+
+      <div class="upgrade-banner" id="upgradeBanner">
+        <div class="ub-text">
+          <div class="ub-title">🚀 Passez à Pro — 14 jours gratuits</div>
+          <div class="ub-sub">Tâches illimitées, IA avancée, coaching santé personnalisé. = moins d'un café / semaine.</div>
+        </div>
+        <button class="btn btn-white btn-sm" onclick="goToPay(this)">Essayer gratuitement →</button>
+      </div>
+    </div>
+
+    <!-- ── TÂCHES ── -->
+    <div id="view-tasks" class="view">
+      <div class="card full-col">
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:1rem;">Ajouter une tâche</div>
+        <div class="task-input-row">
+          <input class="task-input" type="text" id="taskInput" placeholder="Ex : Appeler le médecin, Faire les courses…" onkeydown="if(event.key==='Enter')addTask()">
+          <select class="task-cat-sel" id="taskCat">
+            <option value="Perso">Perso</option>
+            <option value="Santé">Santé</option>
+            <option value="Finance">Finance</option>
+            <option value="Pro">Pro</option>
+            <option value="Maison">Maison</option>
+          </select>
+          <button class="btn btn-blue" onclick="addTask()">+ Ajouter</button>
+        </div>
+        <div id="task-list" class="task-list"></div>
+        <div id="task-empty" style="text-align:center;color:var(--sub);padding:2rem;font-size:.85rem;" class="hidden">Aucune tâche. Ajoutez-en une ci-dessus ✨</div>
+      </div>
+    </div>
+
+    <!-- ── SANTÉ ── -->
+    <div id="view-health" class="view">
+      <div class="health-grid">
+        <div class="health-card">
+          <div class="health-ring">
+            <svg width="70" height="70" viewBox="0 0 70 70"><circle class="ring-bg" cx="35" cy="35" r="28"/><circle class="ring-fg" id="steps-ring" cx="35" cy="35" r="28" stroke="var(--rose)" stroke-dasharray="175.9" stroke-dashoffset="175.9"/></svg>
+            <div class="ring-txt" id="steps-pct">0%</div>
+          </div>
+          <div class="health-lbl">Pas</div>
+          <div class="health-val" id="h-steps">0</div>
+          <div class="health-unit">/ 10 000 objectif</div>
+        </div>
+        <div class="health-card">
+          <div class="health-ring">
+            <svg width="70" height="70" viewBox="0 0 70 70"><circle class="ring-bg" cx="35" cy="35" r="28"/><circle class="ring-fg" id="sleep-ring" cx="35" cy="35" r="28" stroke="var(--blue)" stroke-dasharray="175.9" stroke-dashoffset="175.9"/></svg>
+            <div class="ring-txt" id="sleep-pct">0h</div>
+          </div>
+          <div class="health-lbl">Sommeil</div>
+          <div class="health-val" id="h-sleep">0h</div>
+          <div class="health-unit">/ 8h objectif</div>
+        </div>
+        <div class="health-card">
+          <div class="health-ring">
+            <svg width="70" height="70" viewBox="0 0 70 70"><circle class="ring-bg" cx="35" cy="35" r="28"/><circle class="ring-fg" id="cal-ring" cx="35" cy="35" r="28" stroke="var(--green)" stroke-dasharray="175.9" stroke-dashoffset="175.9"/></svg>
+            <div class="ring-txt" id="cal-pct">0%</div>
+          </div>
+          <div class="health-lbl">Calories</div>
+          <div class="health-val" id="h-cal">0</div>
+          <div class="health-unit">/ 2 000 kcal objectif</div>
+        </div>
+      </div>
+      <div class="card full-col">
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:1rem;">Enregistrer une activité</div>
+        <div class="health-input-row">
+          <select id="h-type">
+            <option value="steps">🦶 Pas</option>
+            <option value="sleep">😴 Sommeil (heures)</option>
+            <option value="calories">🍎 Calories</option>
+            <option value="water">💧 Eau (verres)</option>
+            <option value="sport">🏃 Sport (minutes)</option>
+          </select>
+          <input type="number" id="h-val" placeholder="Valeur" min="0">
+          <button class="btn btn-green" onclick="logHealth()">Enregistrer</button>
+        </div>
+        <div id="health-log" class="health-log"></div>
+        <div id="health-empty" style="text-align:center;color:var(--sub);padding:1.5rem;font-size:.83rem;" class="hidden">Aucune activité enregistrée aujourd'hui.</div>
+      </div>
+    </div>
+
+    <!-- ── BUDGET ── -->
+    <div id="view-budget" class="view">
+      <div class="budget-summary">
+        <div class="bsum"><div class="bsum-lbl">Budget mensuel</div><div class="bsum-val" id="b-budget" style="color:var(--green)">€ 0</div></div>
+        <div class="bsum"><div class="bsum-lbl">Dépensé</div><div class="bsum-val" id="b-spent" style="color:var(--rose)">€ 0</div></div>
+        <div class="bsum"><div class="bsum-lbl">Restant</div><div class="bsum-val" id="b-left" style="color:var(--blue)">€ 0</div></div>
+      </div>
+      <div class="budget-bar-wrap">
+        <div class="budget-bar-lbl"><span>Utilisation du budget</span><span id="b-pct">0%</span></div>
+        <div class="budget-bar-track"><div class="budget-bar-fill" id="b-bar"></div></div>
+      </div>
+      <div class="card full-col">
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:.8rem;">Définir mon budget mensuel</div>
+        <div style="display:flex;gap:.7rem;margin-bottom:1.2rem;">
+          <input class="field" type="number" id="b-set" placeholder="Ex: 1500" style="margin:0;flex:1;">
+          <button class="btn btn-green" onclick="setBudget()">Définir</button>
+        </div>
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:.8rem;">Ajouter une dépense</div>
+        <div class="expense-input-row">
+          <input class="field" type="text" id="e-name" placeholder="Description" style="margin:0;">
+          <input class="field" type="number" id="e-amt" placeholder="Montant (€)" style="margin:0;" min="0">
+          <select class="field" id="e-cat" style="margin:0;">
+            <option>Alimentation</option><option>Transport</option><option>Logement</option>
+            <option>Santé</option><option>Loisirs</option><option>Shopping</option><option>Autre</option>
+          </select>
+          <button class="btn btn-blue" onclick="addExpense()">+ Ajouter</button>
+        </div>
+        <div id="exp-list" class="expense-list"></div>
+        <div id="exp-empty" style="text-align:center;color:var(--sub);padding:1.5rem;font-size:.83rem;" class="hidden">Aucune dépense enregistrée.</div>
+      </div>
+    </div>
+
+    <!-- ── COMMUNAUTÉ ── -->
+    <div id="view-community" class="view">
+      <div class="card full-col">
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:1rem;">Partager avec la communauté</div>
+        <div class="comm-input-area">
+          <textarea class="comm-textarea" id="postInput" placeholder="Bon plan, astuce pour économiser, entraide…"></textarea>
+          <div class="comm-row">
+            <div class="comm-cat-row" id="postCats">
+              <button class="comm-cat-btn on" onclick="selectPostCat(this,'Bon plan')">💡 Bon plan</button>
+              <button class="comm-cat-btn" onclick="selectPostCat(this,'Entraide')">🤝 Entraide</button>
+              <button class="comm-cat-btn" onclick="selectPostCat(this,'Astuce')">✨ Astuce</button>
+              <button class="comm-cat-btn" onclick="selectPostCat(this,'Question')">❓ Question</button>
+            </div>
+            <button class="btn btn-blue btn-sm" onclick="addPost()">Publier</button>
+          </div>
+        </div>
+      </div>
+      <div id="posts-list" class="posts"></div>
+    </div>
+
+    <!-- ── PROFIL ── -->
+    <div id="view-profile" class="view">
+      <div class="profile-grid">
+        <div class="profile-card">
+          <div class="profile-av-big" id="profAv">?</div>
+          <div class="profile-name" id="profName">—</div>
+          <span class="profile-plan plan-free" id="profPlan">Gratuit</span>
+          <div class="profile-stats">
+            <div><span class="pstat-val" id="prof-tasks">0</span><span class="pstat-lbl">Tâches</span></div>
+            <div><span class="pstat-val" id="prof-exp">0</span><span class="pstat-lbl">Dépenses</span></div>
+            <div><span class="pstat-val" id="prof-posts">0</span><span class="pstat-lbl">Posts</span></div>
+          </div>
+          <button class="btn btn-blue btn-full" style="margin-top:1.2rem;" onclick="goToPay(this)">⚡ Passer à Pro</button>
+        </div>
+        <div class="profile-settings">
+          <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:1rem;">Paramètres</div>
+          <div class="setting-row">
+            <div><div class="setting-lbl">Notifications</div><div class="setting-sub">Rappels de tâches et alertes budget</div></div>
+            <button class="toggle on" onclick="this.classList.toggle('on')"><div class="tknob"></div></button>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-lbl">Rapport hebdomadaire</div><div class="setting-sub">Résumé envoyé chaque lundi</div></div>
+            <button class="toggle on" onclick="this.classList.toggle('on')"><div class="tknob"></div></button>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-lbl">Mode sombre</div><div class="setting-sub">Interface en mode nuit</div></div>
+            <button class="toggle" onclick="this.classList.toggle('on')"><div class="tknob"></div></button>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-lbl">Langue</div><div class="setting-sub">Langue de l'interface</div></div>
+            <select class="field" style="width:auto;margin:0;padding:.4rem .7rem;font-size:.8rem;">
+              <option>🇫🇷 Français</option><option>🇺🇸 English</option><option>🇪🇸 Español</option>
+            </select>
+          </div>
+          <div style="margin-top:1.5rem;">
+            <button class="btn btn-outline btn-full" onclick="doLogout()">🚪 Se déconnecter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══════════════════════
+     MODAL UPGRADE
+══════════════════════ -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="modal-dots"><div class="mdot on" id="md1"></div><div class="mdot" id="md2"></div></div>
+    <div id="ms1">
+      <div class="modal-ico">⚡</div>
+      <div class="modal-h">Passez à Pro</div>
+      <div class="modal-sub">Tâches illimitées, IA complète, coaching santé, rapports. 14 jours gratuits.</div>
+      <div class="quick-plans">
+        <div class="qp on" id="qp-pro" onclick="selectPlan('pro')">
+          <div><p class="qp-name">Pro</p><p class="qp-desc">Tout illimité + IA</p><span class="qp-badge">14 jours offerts</span></div>
+          <div style="text-align:right"><p class="qp-price">€ 4,99<span style="font-size:.7rem;font-weight:400">/mois</span></p><p class="qp-period">facturé annuellement</p></div>
+        </div>
+        <div class="qp" id="qp-fam" onclick="selectPlan('fam')">
+          <div><p class="qp-name">Famille</p><p class="qp-desc">6 membres indépendants</p></div>
+          <div style="text-align:right"><p class="qp-price">€ 8,99<span style="font-size:.7rem;font-weight:400">/mois</span></p><p class="qp-period">facturé annuellement</p></div>
+        </div>
+      </div>
+      <button class="btn btn-blue btn-full" onclick="goModalStep2()" id="planBtn">Démarrer l'essai gratuit →</button>
+      <p class="modal-note">Annulable à tout moment · Aucune carte requise</p>
+    </div>
+    <div id="ms2" class="hidden">
+      <div class="modal-ico">🎉</div>
+      <div class="modal-h">Essai Pro activé !</div>
+      <div class="modal-sub">14 jours gratuits. Profitez de toutes les fonctionnalités sans limite.</div>
+      <div class="store-btns">
+        <button class="sb-btn sb-ios">🍎 App Store</button>
+        <button class="sb-btn sb-and">▶ Google Play</button>
+      </div>
+      <button class="btn btn-outline btn-full" onclick="closeModal()">Continuer sur le web</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ══════════════════════════════════════
+// STATE & STORAGE
+// ══════════════════════════════════════
+const S = {
+  save(k,v){ try{localStorage.setItem('ls_'+k,JSON.stringify(v));}catch(e){} },
+  load(k,d=null){ try{const v=localStorage.getItem('ls_'+k);return v!==null?JSON.parse(v):d;}catch(e){return d;} }
+};
+
+let users    = S.load('users',{});
+let curUser  = S.load('curUser',null);
+let tasks    = S.load('tasks',[]);
+let healthLogs = S.load('healthLogs',[]);
+let expenses = S.load('expenses',[]);
+let budget   = S.load('budget',0);
+let posts    = S.load('posts',[
+  {id:1,author:'Marie L.',text:'Astuce : négociez votre assurance auto chaque année, j\'ai économisé 180€ !',cat:'Bon plan',time:'Il y a 2h',likes:12,color:'#2d5be3',liked:false},
+  {id:2,author:'Ahmed K.',text:'Je cherche quelqu\'un pour partager un abonnement Netflix dans le quartier. Interessé(e)s ?',cat:'Entraide',time:'Il y a 4h',likes:5,color:'#0dab73',liked:false},
+  {id:3,author:'Sophie R.',text:'Pour économiser sur les courses : faites votre liste AVANT d\'aller au supermarché et mangez avant d\'y aller !',cat:'Astuce',time:'Il y a 6h',likes:24,color:'#e03060',liked:false}
+]);
+S.save('posts',posts);
+
+let selectedPostCat = 'Bon plan';
+let selectedPlanUpgrade = 'pro';
+let billingYearly = true;
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+function showLanding(){ show('landing'); }
+function showAuth(tab='signup'){
+  show('auth');
+  switchTab(tab);
+}
+function showApp(){
+  show('app');
+  initApp();
+}
+
+// ══════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════
+function switchTab(t){
+  document.getElementById('form-signup').classList.toggle('hidden', t!=='signup');
+  document.getElementById('form-login').classList.toggle('hidden', t!=='login');
+  document.getElementById('tabSignup').classList.toggle('on', t==='signup');
+  document.getElementById('tabLogin').classList.toggle('on', t==='login');
+  document.getElementById('auth-err').style.display='none';
+}
+function showErr(msg){
+  const el=document.getElementById('auth-err');
+  el.textContent=msg; el.style.display='block';
+}
+function doSignup(){
+  const name=document.getElementById('su-name').value.trim();
+  const email=document.getElementById('su-email').value.trim().toLowerCase();
+  const pass=document.getElementById('su-pass').value;
+  if(!name){showErr('Entrez votre prénom.');return;}
+  if(!email||!email.includes('@')){showErr('Email invalide.');return;}
+  if(pass.length<6){showErr('Mot de passe trop court (6 min.).');return;}
+  if(users[email]){showErr('Cet email est déjà utilisé. Connectez-vous.');return;}
+  users[email]={name,pass,plan:'Gratuit'};
+  S.save('users',users);
+  curUser={email,name,plan:'Gratuit'};
+  S.save('curUser',curUser);
+  showApp();
+}
+function doLogin(){
+  const email=document.getElementById('li-email').value.trim().toLowerCase();
+  const pass=document.getElementById('li-pass').value;
+  if(!users[email]){showErr('Aucun compte avec cet email.');return;}
+  if(users[email].pass!==pass){showErr('Mot de passe incorrect.');return;}
+  curUser={email,name:users[email].name,plan:users[email].plan||'Gratuit'};
+  S.save('curUser',curUser);
+  showApp();
+}
+function doLogout(){
+  curUser=null; S.save('curUser',null);
+  showLanding();
+}
+
+// ══════════════════════════════════════
+// APP INIT
+// ══════════════════════════════════════
+function initApp(){
+  if(!curUser){showLanding();return;}
+  tasks    =S.load('tasks',[]);
+  healthLogs=S.load('healthLogs',[]);
+  expenses =S.load('expenses',[]);
+  budget   =S.load('budget',0);
+  posts    =S.load('posts',posts);
+
+  // Sidebar user info
+  const initials=curUser.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('sbAv').textContent=initials;
+  document.getElementById('sbName').textContent=curUser.name;
+  document.getElementById('sbPlan').textContent=curUser.plan||'Gratuit';
+  document.getElementById('profAv').textContent=initials;
+  document.getElementById('profName').textContent=curUser.name;
+  document.getElementById('profPlan').textContent=curUser.plan||'Gratuit';
+
+  // Date
+  const now=new Date();
+  const days=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const months=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  document.getElementById('mainDate').textContent=`${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  document.getElementById('greeting').textContent=`Bonjour, ${curUser.name.split(' ')[0]} 👋`;
+
+  switchView(document.querySelector('[data-view=dash]'),'dash');
+}
+
+// ══════════════════════════════════════
+// VIEW SWITCHING
+// ══════════════════════════════════════
+function switchView(btn,id){
+  document.querySelectorAll('.sbi').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  document.getElementById('view-'+id).classList.add('on');
+  if(id==='dash') renderDash();
+  if(id==='tasks') renderTasks();
+  if(id==='health') renderHealth();
+  if(id==='budget') renderBudget();
+  if(id==='community') renderCommunity();
+  if(id==='profile') renderProfile();
+}
+
+// ══════════════════════════════════════
+// TASKS
+// ══════════════════════════════════════
+function addTask(){
+  const txt=document.getElementById('taskInput').value.trim();
+  const cat=document.getElementById('taskCat').value;
+  if(!txt) return;
+  tasks.unshift({id:Date.now(),text:txt,cat,done:false,date:new Date().toLocaleDateString('fr-FR')});
+  S.save('tasks',tasks);
+  document.getElementById('taskInput').value='';
+  renderTasks();
+  renderDash();
+}
+function toggleTask(id){
+  const t=tasks.find(x=>x.id===id);
+  if(t){t.done=!t.done;S.save('tasks',tasks);}
+  renderTasks(); renderDash();
+}
+function deleteTask(id){
+  tasks=tasks.filter(x=>x.id!==id);
+  S.save('tasks',tasks);
+  renderTasks(); renderDash();
+}
+const catColors={'Perso':'var(--blue-lt)','Santé':'var(--rose-lt)','Finance':'var(--amber-lt)','Pro':'var(--green-lt)','Maison':'#f3f0ff'};
+const catText={'Perso':'var(--blue)','Santé':'var(--rose)','Finance':'var(--amber)','Pro':'var(--green)','Maison':'#7c3aed'};
+function renderTasks(){
+  const el=document.getElementById('task-list');
+  const empty=document.getElementById('task-empty');
+  if(!tasks.length){el.innerHTML='';empty.classList.remove('hidden');return;}
+  empty.classList.add('hidden');
+  el.innerHTML=tasks.map(t=>`
+    <div class="task-item ${t.done?'done':''}">
+      <div class="task-check ${t.done?'on':''}" onclick="toggleTask(${t.id})"></div>
+      <span class="task-text ${t.done?'done':''}">${t.text}</span>
+      <span class="task-cat" style="background:${catColors[t.cat]||'var(--border)'};color:${catText[t.cat]||'var(--sub)'}">${t.cat}</span>
+      <button class="task-del" onclick="deleteTask(${t.id})">✕</button>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════
+// HEALTH
+// ══════════════════════════════════════
+function logHealth(){
+  const type=document.getElementById('h-type').value;
+  const val=parseFloat(document.getElementById('h-val').value);
+  if(!val||val<=0) return;
+  const labels={'steps':'🦶 Pas','sleep':'😴 Sommeil','calories':'🍎 Calories','water':'💧 Eau','sport':'🏃 Sport'};
+  const units={'steps':'pas','sleep':'h','calories':'kcal','water':'verres','sport':'min'};
+  healthLogs.unshift({id:Date.now(),type,val,label:labels[type],unit:units[type],time:new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})});
+  S.save('healthLogs',healthLogs);
+  document.getElementById('h-val').value='';
+  renderHealth();
+}
+function renderHealth(){
+  const today=new Date().toLocaleDateString('fr-FR');
+  const todayLogs=healthLogs.filter(l=>new Date(l.id).toLocaleDateString('fr-FR')===today);
+
+  const sum=(type)=>todayLogs.filter(l=>l.type===type).reduce((a,b)=>a+b.val,0);
+  const steps=sum('steps'),sleep=sum('sleep'),cals=sum('calories');
+
+  document.getElementById('h-steps').textContent=Math.round(steps).toLocaleString('fr-FR');
+  document.getElementById('h-sleep').textContent=sleep+'h';
+  document.getElementById('h-cal').textContent=Math.round(cals);
+
+  const sp=Math.min(steps/10000,1),slp=Math.min(sleep/8,1),cp=Math.min(cals/2000,1);
+  setRing('steps-ring',sp,'steps-pct',Math.round(sp*100)+'%');
+  setRing('sleep-ring',slp,'sleep-pct',sleep+'h');
+  setRing('cal-ring',cp,'cal-pct',Math.round(cp*100)+'%');
+
+  const el=document.getElementById('health-log');
+  const empty=document.getElementById('health-empty');
+  if(!healthLogs.length){el.innerHTML='';empty.classList.remove('hidden');return;}
+  empty.classList.add('hidden');
+  el.innerHTML=healthLogs.slice(0,10).map(l=>`
+    <div class="log-item">
+      <span>${l.label} — <strong>${l.val} ${l.unit}</strong></span>
+      <span class="log-time">${l.time}</span>
+    </div>`).join('');
+}
+function setRing(ringId,pct,txtId,label){
+  const circ=175.9;
+  const ring=document.getElementById(ringId);
+  if(ring) ring.style.strokeDashoffset=circ-(circ*pct);
+  const txt=document.getElementById(txtId);
+  if(txt) txt.textContent=label;
+}
+
+// ══════════════════════════════════════
+// BUDGET
+// ══════════════════════════════════════
+function setBudget(){
+  const v=parseFloat(document.getElementById('b-set').value);
+  if(!v||v<=0) return;
+  budget=v; S.save('budget',budget);
+  document.getElementById('b-set').value='';
+  renderBudget();
+}
+function addExpense(){
+  const name=document.getElementById('e-name').value.trim();
+  const amt=parseFloat(document.getElementById('e-amt').value);
+  const cat=document.getElementById('e-cat').value;
+  if(!name||!amt||amt<=0) return;
+  expenses.unshift({id:Date.now(),name,amt,cat,date:new Date().toLocaleDateString('fr-FR')});
+  S.save('expenses',expenses);
+  document.getElementById('e-name').value='';
+  document.getElementById('e-amt').value='';
+  renderBudget(); renderDash();
+}
+function deleteExpense(id){
+  expenses=expenses.filter(x=>x.id!==id);
+  S.save('expenses',expenses);
+  renderBudget(); renderDash();
+}
+function renderBudget(){
+  const total=expenses.reduce((a,b)=>a+b.amt,0);
+  const left=budget-total;
+  const pct=budget>0?Math.min(total/budget*100,100):0;
+  document.getElementById('b-budget').textContent='€ '+budget.toLocaleString('fr-FR',{minimumFractionDigits:2});
+  document.getElementById('b-spent').textContent='€ '+total.toLocaleString('fr-FR',{minimumFractionDigits:2});
+  document.getElementById('b-left').textContent='€ '+Math.max(left,0).toLocaleString('fr-FR',{minimumFractionDigits:2});
+  document.getElementById('b-pct').textContent=Math.round(pct)+'%';
+  const bar=document.getElementById('b-bar');
+  bar.style.width=pct+'%';
+  bar.style.background=pct>85?'var(--rose)':pct>60?'var(--amber)':'var(--green)';
+
+  const el=document.getElementById('exp-list');
+  const empty=document.getElementById('exp-empty');
+  if(!expenses.length){el.innerHTML='';empty.classList.remove('hidden');return;}
+  empty.classList.add('hidden');
+  el.innerHTML=expenses.map(e=>`
+    <div class="exp-item">
+      <div>
+        <div style="font-weight:600;font-size:.84rem;">${e.name}</div>
+        <div style="font-size:.7rem;color:var(--sub);">${e.date}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.7rem;">
+        <span class="exp-cat">${e.cat}</span>
+        <span class="exp-amt">€ ${e.amt.toFixed(2)}</span>
+        <button class="exp-del" onclick="deleteExpense(${e.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════
+// COMMUNITY
+// ══════════════════════════════════════
+function selectPostCat(btn,cat){
+  document.querySelectorAll('.comm-cat-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  selectedPostCat=cat;
+}
+function addPost(){
+  const txt=document.getElementById('postInput').value.trim();
+  if(!txt) return;
+  const colors=['#2d5be3','#e03060','#0dab73','#e07d00','#7c3aed'];
+  const col=colors[Math.floor(Math.random()*colors.length)];
+  posts.unshift({id:Date.now(),author:curUser.name,text:txt,cat:selectedPostCat,time:'À l\'instant',likes:0,color:col,liked:false});
+  S.save('posts',posts);
+  document.getElementById('postInput').value='';
+  renderCommunity();
+}
+function likePost(id){
+  const p=posts.find(x=>x.id===id);
+  if(p){p.liked=!p.liked;p.likes+=p.liked?1:-1;S.save('posts',posts);}
+  renderCommunity();
+}
+const catTagStyle={
+  'Bon plan':'background:var(--amber-lt);color:var(--amber)',
+  'Entraide':'background:var(--green-lt);color:var(--green)',
+  'Astuce':'background:var(--blue-lt);color:var(--blue)',
+  'Question':'background:var(--rose-lt);color:var(--rose)'
+};
+function renderCommunity(){
+  const el=document.getElementById('posts-list');
+  el.innerHTML=posts.map(p=>`
+    <div class="post">
+      <div class="post-top">
+        <div class="post-av" style="background:${p.color}">${p.author.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}</div>
+        <div><div class="post-author">${p.author}</div><div class="post-time">${p.time}</div></div>
+      </div>
+      <div class="post-body">${p.text}</div>
+      <span class="post-tag" style="${catTagStyle[p.cat]||''}">${p.cat}</span>
+      <div class="post-actions">
+        <button class="post-action ${p.liked?'liked':''}" onclick="likePost(${p.id})">❤️ ${p.likes}</button>
+        <button class="post-action">💬 Répondre</button>
+        <button class="post-action">↗️ Partager</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════
+// PROFILE
+// ══════════════════════════════════════
+function renderProfile(){
+  document.getElementById('prof-tasks').textContent=tasks.length;
+  document.getElementById('prof-exp').textContent=expenses.length;
+  document.getElementById('prof-posts').textContent=posts.filter(p=>p.author===curUser.name).length;
+}
+
+// ══════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════
+function renderDash(){
+  // Tasks stat
+  const todayTasks=tasks;
+  const doneTasks=todayTasks.filter(t=>t.done).length;
+  const total=todayTasks.length;
+  document.getElementById('ds-tasks').textContent=`${doneTasks}/${total}`;
+  document.getElementById('ds-tasks-ch').innerHTML=total?`<span class="up">↑ ${Math.round(doneTasks/total*100)}% complétées</span>`:'Ajoutez vos premières tâches';
+  document.getElementById('ds-tasks-bar').style.width=(total?doneTasks/total*100:0)+'%';
+
+  // Steps
+  const today=new Date().toLocaleDateString('fr-FR');
+  const todayH=healthLogs.filter(l=>new Date(l.id).toLocaleDateString('fr-FR')===today);
+  const steps=todayH.filter(l=>l.type==='steps').reduce((a,b)=>a+b.val,0);
+  document.getElementById('ds-steps').textContent=Math.round(steps).toLocaleString('fr-FR');
+  document.getElementById('ds-steps-ch').innerHTML=`<span class="${steps>=10000?'up':'down'}">${steps>=10000?'✓ Objectif atteint !':'Objectif : 10 000 pas'}</span>`;
+  document.getElementById('ds-steps-bar').style.width=Math.min(steps/10000*100,100)+'%';
+
+  // Budget
+  const spent=expenses.reduce((a,b)=>a+b.amt,0);
+  const left=budget-spent;
+  document.getElementById('ds-budget').textContent=budget>0?'€ '+Math.max(left,0).toFixed(0):'Non défini';
+  document.getElementById('ds-budget-ch').innerHTML=budget>0?`<span class="${left>=0?'up':'down'}">${left>=0?'↑ Bon budget':'↓ Dépassé'}</span>`:'Définissez votre budget';
+  document.getElementById('ds-budget-bar').style.width=budget>0?Math.min(spent/budget*100,100)+'%':'0%';
+
+  // Score
+  let score=50;
+  if(total>0) score+=Math.round(doneTasks/total*20);
+  if(steps>=5000) score+=15;
+  if(budget>0&&left>=0) score+=15;
+  score=Math.min(score,100);
+  document.getElementById('ds-score').textContent=score+'/100';
+  document.getElementById('ds-score-bar').style.width=score+'%';
+
+  // Dash tasks preview
+  const dt=document.getElementById('dash-tasks');
+  const latest=tasks.slice(0,4);
+  if(!latest.length){dt.innerHTML='<div style="color:var(--sub);font-size:.82rem;text-align:center;padding:1rem;">Aucune tâche. Commencez maintenant ✨</div>';return;}
+  dt.innerHTML=latest.map(t=>`
+    <div class="task-item ${t.done?'done':''}">
+      <div class="task-check ${t.done?'on':''}" onclick="toggleTask(${t.id}); renderDash()"></div>
+      <span class="task-text ${t.done?'done':''}" style="font-size:.82rem;">${t.text}</span>
+      <span class="task-cat" style="background:${catColors[t.cat]||'var(--border)'};color:${catText[t.cat]||'var(--sub)'}">${t.cat}</span>
+    </div>`).join('');
+
+  // Dash expenses preview
+  const de=document.getElementById('dash-expenses');
+  const latestE=expenses.slice(0,4);
+  if(!latestE.length){de.innerHTML='<div style="color:var(--sub);font-size:.82rem;text-align:center;padding:1rem;">Aucune dépense enregistrée.</div>';return;}
+  de.innerHTML=latestE.map(e=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:.55rem .8rem;background:var(--bg);border-radius:var(--r);font-size:.8rem;">
+      <span>${e.name}</span>
+      <span style="font-weight:600;color:var(--rose);">− €${e.amt.toFixed(2)}</span>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════
+function openModal(){
+  document.getElementById('modalOverlay').classList.add('on');
+  document.getElementById('ms1').classList.remove('hidden');
+  document.getElementById('ms2').classList.add('hidden');
+  document.getElementById('md1').classList.add('on');
+  document.getElementById('md2').classList.remove('on');
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('on'); }
+function selectPlan(p){
+  selectedPlanUpgrade=p;
+  document.getElementById('qp-pro').classList.toggle('on',p==='pro');
+  document.getElementById('qp-fam').classList.toggle('on',p==='fam');
+}
+function goModalStep2(){
+  document.getElementById('ms1').classList.add('hidden');
+  document.getElementById('ms2').classList.remove('hidden');
+  document.getElementById('md1').classList.remove('on');
+  document.getElementById('md2').classList.add('on');
+  if(curUser){
+    const plan=selectedPlanUpgrade==='pro'?'Pro':'Famille';
+    curUser.plan=plan;
+    S.save('curUser',curUser);
+    if(users[curUser.email]){users[curUser.email].plan=plan;S.save('users',users);}
+    document.getElementById('sbPlan').textContent=plan;
+    document.getElementById('profPlan').textContent=plan;
+    document.getElementById('profPlan').className='profile-plan plan-pro';
+    document.getElementById('upgradeBanner').style.display='none';
+  }
+}
+
+// ══════════════════════════════════════
+// PRICING TOGGLE (landing)
+// ══════════════════════════════════════
+function toggleBill(){
+  billingYearly=!billingYearly;
+  const t=document.getElementById('btog');
+  t.classList.toggle('on',billingYearly);
+  document.getElementById('saveChip').style.display=billingYearly?'inline-block':'none';
+  if(billingYearly){
+    document.getElementById('proP').innerHTML='<sup>€</sup>4,99';
+    document.getElementById('proM').textContent='par mois · facturé annuellement';
+    document.getElementById('proE').textContent="= moins d'un café / semaine";
+    document.getElementById('famP').innerHTML='<sup>€</sup>8,99';
+    document.getElementById('famM').textContent='par mois · facturé annuellement';
+    document.getElementById('famE').textContent='6 membres = 1,50€ / personne';
+  } else {
+    document.getElementById('proP').innerHTML='<sup>€</sup>7,99';
+    document.getElementById('proM').textContent='par mois';
+    document.getElementById('proE').textContent='';
+    document.getElementById('famP').innerHTML='<sup>€</sup>14,99';
+    document.getElementById('famM').textContent='par mois';
+    document.getElementById('famE').textContent='';
+  }
+}
+
+// ══════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════
+(function boot(){
+  if(curUser){ showApp(); }
+  else { show('landing'); }
+})();
+</script>
+</body>
+</html>
